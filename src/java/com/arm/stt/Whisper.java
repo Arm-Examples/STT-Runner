@@ -25,6 +25,48 @@ public class Whisper {
     public native long initContext(String modelPath);
 
     /**
+     * Function to extracts parameters from WhisperConfig object and
+     * run the private InitParams function to initialize the parameters
+     *
+     * @param whisperConfig the configuration object containing Whisper parameter settings
+     */
+    public void initParameters(WhisperConfig whisperConfig)
+    {
+        boolean printRealTime = whisperConfig.isPrintRealTime();
+        boolean printProgress = whisperConfig.isPrintProgress();
+        boolean timeStamps = whisperConfig.isTimeStamps();
+        boolean printSpecial = whisperConfig.isPrintSpecial();
+        boolean translate = whisperConfig.isTranslate();
+        String language = whisperConfig.getLanguage();
+        int numThreads = whisperConfig.getNumThreads();
+        int offsetMs = whisperConfig.getOffsetMs();
+        boolean noContext = whisperConfig.isNoContext();
+        boolean singleSegment =whisperConfig.isSingleSegment();
+
+        initParams(printRealTime, printProgress, timeStamps, printSpecial, translate, language,
+                numThreads, offsetMs, noContext, singleSegment);
+    }
+
+    /**
+     * Initializes the native Whisper parameters with the specified settings.
+     *
+     * @param printRealTime  whether to print partial decoding results in real-time
+     * @param printProgress  whether to print progress information
+     * @param timeStamps     whether to include timestamps in the transcription
+     * @param printSpecial   whether to include special tokens (e.g., markers) in the output
+     * @param translate      whether to translate the transcription to English
+     * @param language       the language code for transcription (e.g., "en", "fr", etc.)
+     * @param numThreads     the number of CPU threads to use for transcription
+     * @param offsetMs       an initial time offset (in milliseconds) for the transcription
+     * @param noContext      whether to disable reusing context between segments
+     * @param singleSegment  whether to transcribe the entire audio in a single segment
+     */
+    private native void initParams(boolean printRealTime, boolean printProgress, boolean timeStamps,
+                                  boolean printSpecial, boolean translate, String language,
+                                  int numThreads, int offsetMs, boolean noContext,
+                                  boolean singleSegment);
+
+    /**
     * Function to free the previously initialised whisper_context
     *
     * @param  contextPtr  pointer to the context object previously initialised
@@ -35,9 +77,8 @@ public class Whisper {
     * Function to run the entire transcription inference loop
     *
     * @param  contextPtr pointer to the context object previously initialised
-    * @param  numThreads number of threads to use
     * @param  audioData  audio data to transcribe
     * @return transcribed string object
     */
-    public native String fullTranscribe(long contextPtr, int numThreads, float[] audioData);
+    public native String fullTranscribe(long contextPtr, float[] audioData);
 }

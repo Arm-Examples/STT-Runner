@@ -39,8 +39,21 @@ TEST_CASE("Test audio file float representation to text")
     auto* context = stt.InitContext<whisper_context>(modelPath.c_str());
     std::vector<float> audioData = ReadAudioData(audioDataPath);
 
-    constexpr int threads = 2;
-    const std::string transcribed = stt.FullTranscribe<whisper_context>(context, threads, &audioData[0], audioData.size());
+    const bool printRealtime = true;
+    const bool printProgress = false;
+    const bool timeStamps = true;
+    const bool printSpecial = false;
+    const bool translate = false;
+    const char *language = "en";
+    const int numThreads = 2;
+    const int offsetMs = 0;
+    const bool noContext = true;
+    const bool singleSegment = false;
+
+    stt.InitParams(printRealtime, printProgress, timeStamps, printSpecial, translate, language,
+                   numThreads, offsetMs, noContext, singleSegment);
+
+    const std::string transcribed = stt.FullTranscribe<whisper_context>(context, &audioData[0], audioData.size());
 
     CHECK(transcribed == " And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.");
 }

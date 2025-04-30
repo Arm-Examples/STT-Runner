@@ -16,7 +16,7 @@ project(arm-stt-java-prj
 add_library(arm-stt-java INTERFACE)
 
 if (${STT_DEP_NAME} STREQUAL "whisper.cpp")
-    target_sources(arm-stt-java INTERFACE com/arm/stt/Whisper.java)
+    target_sources(arm-stt-java INTERFACE com/arm/stt/Whisper.java com/arm/stt/WhisperConfig.java)
     add_dependencies(arm-stt-java arm-stt-jni)
 else()
     message(FATAL_ERROR "${STT_DEP_NAME} is currently not supported :(")

@@ -17,8 +17,12 @@
 * @brief Whisper Implementation of our STT API
 *
 */
-class WhisperImpl : public STT<WhisperImpl> {
+class WhisperImpl {
 private:
+
+    std::string strLang{"en"};
+    struct whisper_full_params whisperParams{};
+
     /**
      * Function to retrieve the total number of text segments
      * @param contextPtr whisper_context pointer
@@ -41,34 +45,41 @@ private:
         return text;
     }
 
-    /**
-     * The transcription inference loop, inspired by an existing whisper.cpp example
-     * @param contextPtr whisper_context pointer
-     * @param numThreads number of threads to use
-     * @param audioDataPtr pointer to audio data to transcribe
-     * @param audioDataLength length of the audio data array
-     */
-    void Transcribe(whisper_context* contextPtr, const int numThreads, const float* audioDataPtr, const int audioDataLength)
-    {
-        whisper_full_params params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-        params.print_realtime = true;
-        params.print_progress = false;
-        params.print_timestamps = true;
-        params.print_special = false;
-        params.translate = false;
-        params.language = "en";
-        params.n_threads = numThreads;
-        params.offset_ms = 0;
-        params.no_context = true;
-        params.single_segment = false;
-
-        whisper_full(contextPtr, params, &audioDataPtr[0], audioDataLength);
-        whisper_reset_timings(contextPtr);
-        whisper_print_timings(contextPtr);
-    }
-
 public:
     WhisperImpl() = default;
+
+    /**
+    * Initializes the Whisper parameters with the specified settings.
+    * @param printRealTime  whether to print partial decoding results in real-time
+    * @param printProgress  whether to print progress information
+    * @param timeStamps     whether to include timestamps in the transcription
+    * @param printSpecial   whether to include special tokens (e.g., markers) in the output
+    * @param translate      whether to translate the transcription to English
+    * @param language       the language code for transcription (e.g., "en", "fr", etc.)
+    * @param numThreads     the number of CPU threads to use for transcription
+    * @param offsetMs       an initial time offset (in milliseconds) for the transcription
+    * @param noContext      whether to disable reusing context between segments
+    * @param singleSegment  whether to transcribe the entire audio in a single segment
+    */
+    void InitParams(const bool printRealtime, const bool printProgress, const bool printTimestamps,
+                    const bool printSpecial, const bool translate, const char *language,
+                    const int numThreads, const int offsetMs, const bool noContext,
+                    const bool singleSegment)
+    {
+        this->strLang = std::string(language);
+        this->whisperParams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
+        this->whisperParams.print_realtime   = printRealtime;
+        this->whisperParams.print_progress   = printProgress;
+        this->whisperParams.print_timestamps = printTimestamps;
+        this->whisperParams.print_special    = printSpecial;
+        this->whisperParams.translate        = translate;
+        this->whisperParams.language         = strLang.c_str();
+        this->whisperParams.n_threads        = numThreads;
+        this->whisperParams.offset_ms        = offsetMs;
+        this->whisperParams.no_context       = noContext;
+        this->whisperParams.single_segment   = singleSegment;
+
+    }
 
     /**
     * Function to load the chosen STT model and to init the context
@@ -92,15 +103,19 @@ public:
 
     /**
     * The full transcription inference loop, and retrieval of all text segments
-    * Taken from whisper.cpp/examples/whisper.android/lib/src/main/jni/whisper/jni.c and slightly modified
+    * Taken from whisper.cpp/examples/whisper.android/lib/src/main/jni/whisper/jni.c and slightly
+    * modified
     * @param contextPtr whisper_context pointer
-    * @param  numThreads number of threads to use
-    * @param  audioDataPtr  pointer to audio data to transcribe
+    * @param audioDataPtr  pointer to audio data to transcribe
     * @param audioDataLength length of the audio data array
     */
-    std::string FullTranscribe(whisper_context* contextPtr, const int numThreads, const float* audioDataPtr, const int audioDataLength)
+    std::string FullTranscribe(whisper_context* contextPtr, const float* audioDataPtr,
+                               const int audioDataLength)
     {
-        Transcribe(contextPtr, numThreads, audioDataPtr, audioDataLength);
+
+        whisper_full(contextPtr, whisperParams, &audioDataPtr[0], audioDataLength);
+        whisper_reset_timings(contextPtr);
+        whisper_print_timings(contextPtr);
 
         int count = GetTextSegmentCount(contextPtr);
 
