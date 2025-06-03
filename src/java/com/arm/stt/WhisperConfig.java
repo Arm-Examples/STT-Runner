@@ -6,6 +6,10 @@
 
 package com.arm.stt;
 
+/**
+ * @class WhisperConfig
+ * @brief Config for setting options for Whisper
+ */
 public class WhisperConfig {
 
     private boolean printRealTime;
@@ -19,6 +23,19 @@ public class WhisperConfig {
     private boolean noContext;
     private boolean singleSegment;
 
+    /**
+     * Initializes the Whisper config with the specified settings.
+     * @param printRealTime  whether to print partial decoding results in real-time
+     * @param printProgress  whether to print progress information
+     * @param timeStamps     whether to include timestamps in the transcription
+     * @param printSpecial   whether to include special tokens (e.g., markers) in the output
+     * @param translate      whether to translate the transcription to English
+     * @param language       the language code for transcription (e.g., "en", "fr", etc.)
+     * @param numThreads     the number of CPU threads to use for transcription
+     * @param offsetMs       an initial time offset (in milliseconds) for the transcription
+     * @param noContext      whether to disable reusing context between segments
+     * @param singleSegment  whether to transcribe the entire audio in a single segment
+     */
     public WhisperConfig(boolean printRealTime, boolean printProgress, boolean timeStamps,
                          boolean printSpecial, boolean translate, String language,
                          int numThreads, int offsetMs, boolean noContext, boolean singleSegment)

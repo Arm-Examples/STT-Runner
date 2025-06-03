@@ -32,12 +32,12 @@ public:
      * @param noContext      whether to disable reusing context between segments
      * @param singleSegment  whether to transcribe the entire audio in a single segment
      */
-    void InitParams(const bool printRealtime, const bool printProgress, const bool timeStamps,
+    void InitParams(const bool printRealTime, const bool printProgress, const bool timeStamps,
                     const bool printSpecial, const bool translate, const char *language,
                     const int numThreads, const int offsetMs, const bool noContext,
                     const bool singleSegment)
     {
-        stt.InitParams(printRealtime, printProgress, timeStamps, printSpecial, translate,
+        stt.InitParams(printRealTime, printProgress, timeStamps, printSpecial, translate,
                        language, numThreads, offsetMs, noContext, singleSegment);
     }
 
@@ -70,6 +70,7 @@ public:
      * @param contextPtr stt context pointer
      * @param audioData  audio data to transcribe
      * @param audioDataLength length of the Audio data supplied
+     * @return String containing the transcribed text.
      */
     template<typename P>
     std::string FullTranscribe(P* contextPtr, float* audioData, int audioDataLength)

@@ -52,7 +52,7 @@ public:
     * Initializes the Whisper parameters with the specified settings.
     * @param printRealTime  whether to print partial decoding results in real-time
     * @param printProgress  whether to print progress information
-    * @param timeStamps     whether to include timestamps in the transcription
+    * @param printTimestamps whether to include timestamps in the transcription
     * @param printSpecial   whether to include special tokens (e.g., markers) in the output
     * @param translate      whether to translate the transcription to English
     * @param language       the language code for transcription (e.g., "en", "fr", etc.)
@@ -61,14 +61,14 @@ public:
     * @param noContext      whether to disable reusing context between segments
     * @param singleSegment  whether to transcribe the entire audio in a single segment
     */
-    void InitParams(const bool printRealtime, const bool printProgress, const bool printTimestamps,
+    void InitParams(const bool printRealTime, const bool printProgress, const bool printTimestamps,
                     const bool printSpecial, const bool translate, const char *language,
                     const int numThreads, const int offsetMs, const bool noContext,
                     const bool singleSegment)
     {
         this->strLang = std::string(language);
         this->whisperParams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-        this->whisperParams.print_realtime   = printRealtime;
+        this->whisperParams.print_realtime   = printRealTime;
         this->whisperParams.print_progress   = printProgress;
         this->whisperParams.print_timestamps = printTimestamps;
         this->whisperParams.print_special    = printSpecial;
@@ -108,6 +108,7 @@ public:
     * @param contextPtr whisper_context pointer
     * @param audioDataPtr  pointer to audio data to transcribe
     * @param audioDataLength length of the audio data array
+    * @return String containing the transcribed text
     */
     std::string FullTranscribe(whisper_context* contextPtr, const float* audioDataPtr,
                                const int audioDataLength)
