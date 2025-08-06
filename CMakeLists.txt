@@ -25,9 +25,11 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Make coverage option available and wire flags if enabled
+include(enable-coverage)
+
 # Add configuration options
 include(configuration-options)
-
 
 # Download the common resources that may be used. Once these are set up
 # in the repository, they won't be downloaded again for each build.

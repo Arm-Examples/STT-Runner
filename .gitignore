@@ -5,3 +5,5 @@ Testing/
 cmake-build-*/
 build-*/
 test/resources/audioData.csv
+# Ignore coverage build directory
+build_coverage/
