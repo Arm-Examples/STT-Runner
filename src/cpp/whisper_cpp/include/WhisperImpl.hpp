@@ -8,6 +8,8 @@
 
 #include "whisper.h"
 #include "STT.hpp"
+#include "Logger.hpp"
+#include "SttErrorMessages.hpp"
 #include <string>
 
 #ifndef STT_WHISPER_IMPL_HPP
@@ -19,6 +21,31 @@
 */
 class WhisperImpl {
 private:
+
+    /**
+    * @brief Callback to route ggml/whisper internal logs through STT logger.
+    */
+    static void whisper_log_callback(enum ggml_log_level level, const char * text, void * user_data)
+    {
+        switch (level) {
+            case GGML_LOG_LEVEL_DEBUG:
+                LOG_DEBUG("%s", text);
+                break;
+            case GGML_LOG_LEVEL_INFO:
+                LOG_INF("%s", text);
+                break;
+            case GGML_LOG_LEVEL_WARN:
+                LOG_WARN("%s", text);
+                break;
+            case GGML_LOG_LEVEL_ERROR:
+                LOG_ERROR("%s", text);
+                break;
+            default:
+                break;
+        }
+
+        (void) user_data;
+    }
 
     std::string strLang{"en"};
     struct whisper_full_params whisperParams{};
@@ -78,6 +105,9 @@ public:
         this->whisperParams.offset_ms        = offsetMs;
         this->whisperParams.no_context       = noContext;
         this->whisperParams.single_segment   = singleSegment;
+
+        LOG_DEBUG("Whisper params initialised: lang=%s threads=%d offset_ms=%d",
+                    strLang.c_str(), numThreads, offsetMs);
     }
 
     /**
@@ -88,10 +118,15 @@ public:
     */
     whisper_context* InitContext(const char *pathToModel,  const char* sharedLibraryPath)
     {
+        whisper_log_set(whisper_log_callback, nullptr);
         ggml_backend_load_all_from_path(sharedLibraryPath);
         auto params = whisper_context_default_params();
         params.use_gpu = false;
+        LOG_INF("Loading Whisper model: %s", pathToModel);
         whisper_context *context = whisper_init_from_file_with_params(pathToModel, params);
+        if (context == nullptr) {
+            THROW_ERROR(SttErrorMessages::INIT_CONTEXT_FAIL, pathToModel);
+        }
         return context;
     }
 
@@ -116,9 +151,23 @@ public:
     std::string FullTranscribe(whisper_context* contextPtr, const float* audioDataPtr,
                                const int audioDataLength)
     {
-
+        if (!contextPtr) {
+            THROW_INVALID_ARGUMENT(SttErrorMessages::FULL_TRANSCRIBE_NULL_CTX);
+        }
+        if (!audioDataPtr || audioDataLength <= 0) {
+            THROW_INVALID_ARGUMENT(SttErrorMessages::FULL_TRANSCRIBE_INVALID_AUDIO,
+                                (const void*)audioDataPtr, audioDataLength);
+        }
+        
         whisper_reset_timings(contextPtr);
-        whisper_full(contextPtr, whisperParams, &audioDataPtr[0], audioDataLength);
+        LOG_DEBUG("Starting transcription: frames=%d", audioDataLength);
+        const int resultCode = whisper_full(contextPtr, 
+            whisperParams, 
+            &audioDataPtr[0], 
+            audioDataLength);
+        if (resultCode != 0) {
+            THROW_ERROR("whisper_full failed with code %d", resultCode);
+        }
         whisper_print_timings(contextPtr);
 
         int count = GetTextSegmentCount(contextPtr);
@@ -128,6 +177,7 @@ public:
         {
             transcribed += GetTextSegment(contextPtr, i);
         }
+        LOG_INF("Transcription complete: segments=%d, chars=%zu", count, transcribed.size());
         return transcribed;
     }
 };

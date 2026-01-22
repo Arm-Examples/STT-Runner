@@ -24,8 +24,9 @@ if (NOT TARGET arm-stt-cpp)
 endif()
 
 message(STATUS "Adding C++ tests")
-add_executable(stt-cpp-tests cpp/WhisperTest.cpp)
-
+add_executable(stt-cpp-tests
+    cpp/WhisperTest.cpp
+    cpp/SttLogTest.cpp)
 
 # Convert WAV file to CSV for testing
 include(convert-wav)
