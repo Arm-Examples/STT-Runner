@@ -38,6 +38,9 @@ if (lower_system_processor MATCHES "^(aarch64|arm64)$")
 endif()
 
 # If the user has NOT explicitly set GGML_CPU_KLEIDIAI
+if(DEFINED USE_KLEIDIAI AND NOT DEFINED GGML_CPU_KLEIDIAI)
+    set(GGML_CPU_KLEIDIAI ${USE_KLEIDIAI})
+endif()
 if (NOT DEFINED GGML_CPU_KLEIDIAI)
     # if we are on arm64/aarch64, then default KleidiAI to ON.
     if (ARM_SYSTEM_PROCESSOR)

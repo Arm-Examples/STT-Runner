@@ -6,81 +6,45 @@
     "patch": 0
   },
   "include": [
-    "scripts/cmake/toolchains/toolchain-presets.json",
     "scripts/cmake/configuration-presets.json"
   ],
   "configurePresets": [
     {
-      "name": "elinux-aarch64-release-with-tests",
+      "name": "base",
+      "hidden": true,
       "inherits": [
-        "aarch64-elinux-gnu-toolchain",
         "build-type-rel",
+        "executable-disabled",
         "unit-tests-enabled",
-        "build-shared-disabled"
+        "jni-enabled",
+        "build-shared-disabled",
+        "ggml-openmp-off"
       ]
     },
     {
-      "name": "elinux-aarch64-release-without-tests",
+      "name": "native",
       "inherits": [
-        "aarch64-elinux-gnu-toolchain",
-        "build-type-rel",
-        "unit-tests-disabled",
-        "build-shared-disabled"
-      ]
+        "base"
+      ],
+      "toolchainFile": "${sourceDir}/scripts/cmake/toolchains/native-dispatch.cmake"
     },
     {
-      "name": "elinux-aarch64-debug-with-tests",
+      "name": "x-android-aarch64",
       "inherits": [
-        "aarch64-elinux-gnu-toolchain",
-        "build-type-dbg",
-        "unit-tests-enabled",
-        "build-shared-disabled"
-      ]
+        "base"
+      ],
+      "cacheVariables": {
+        "ANDROID_ABI": "arm64-v8a",
+        "ANDROID_PLATFORM": "android-33"
+      },
+      "toolchainFile": "${sourceDir}/scripts/cmake/toolchains/x-android-aarch64.cmake"
     },
     {
-      "name": "elinux-aarch64-debug-without-tests",
+      "name": "x-linux-aarch64",
       "inherits": [
-        "aarch64-elinux-gnu-toolchain",
-        "build-type-dbg",
-        "unit-tests-disabled",
-        "build-shared-disabled"
-      ]
-    },
-    {
-      "name": "native-release-with-tests",
-      "inherits": [
-        "native-gnu-toolchain",
-        "build-type-rel",
-        "unit-tests-enabled",
-        "build-shared-disabled"
-      ]
-    },
-    {
-      "name": "native-release-without-tests",
-      "inherits": [
-        "native-gnu-toolchain",
-        "build-type-rel",
-        "unit-tests-disabled",
-        "build-shared-disabled"
-      ]
-    },
-    {
-      "name": "native-debug-with-tests",
-      "inherits": [
-        "native-gnu-toolchain",
-        "build-type-dbg",
-        "unit-tests-enabled",
-        "build-shared-disabled"
-      ]
-    },
-    {
-      "name": "native-debug-without-tests",
-      "inherits": [
-        "native-gnu-toolchain",
-        "build-type-dbg",
-        "unit-tests-disabled",
-        "build-shared-disabled"
-      ]
+        "base"
+      ],
+      "toolchainFile": "${sourceDir}/scripts/cmake/toolchains/x-linux-aarch64.cmake"
     }
   ]
 }
