@@ -7,6 +7,28 @@
   },
   "configurePresets": [
     {
+      "name": "build-type-rel",
+      "description": "Release build type.",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "build-type-dbg",
+      "description": "Debug build type.",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
       "name": "unit-tests-enabled",
       "description": "Configure with unit tests enabled.",
       "hidden": true,
@@ -67,8 +89,74 @@
       "hidden": true,
       "cacheVariables": {
         "BUILD_SHARED_LIBS": {
-            "type": "BOOL",
-            "value": "OFF"
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
+    },
+    {
+      "name": "executable-enabled",
+      "description": "Configure with stand-alone executables enabled.",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_EXECUTABLE": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "executable-disabled",
+      "description": "Do not build stand-alone executables.",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_EXECUTABLE": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
+    },
+    {
+      "name": "kleidi-on",
+      "description": "Enable KleidiAI.",
+      "hidden": true,
+      "cacheVariables": {
+        "USE_KLEIDIAI": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "kleidi-off",
+      "description": "Disable KleidiAI.",
+      "hidden": true,
+      "cacheVariables": {
+        "USE_KLEIDIAI": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
+    },
+    {
+      "name": "ggml-openmp-off",
+      "description": "Disable GGML OpenMP.",
+      "hidden": true,
+      "cacheVariables": {
+        "GGML_OPENMP": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
+    },
+    {
+      "name": "ggml-openmp-on",
+      "description": "Enable GGML OpenMP.",
+      "hidden": true,
+      "cacheVariables": {
+        "GGML_OPENMP": {
+          "type": "BOOL",
+          "value": "ON"
         }
       }
     }
