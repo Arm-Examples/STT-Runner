@@ -21,6 +21,7 @@
   * [Building and running tests](#building-and-running-tests)
     * [To Build a test executable](#to-build-a-test-executable)
     * [To Build a JNI lib](#to-build-a-jni-lib)
+  * [Contributions](#contributions)
   * [Known Issues](#known-issues)
   * [Trademarks](#trademarks)
   * [License](#license)
@@ -311,6 +312,10 @@ To quantize your model, you can use the [whisper.cpp quantize tool](https://gith
 
 However, any model supported by the backend library could be used.
 > **NOTE**: Currently only Q4_0 models are accelerated by Arm® KleidiAI™ kernels in whisper.cpp.
+
+## Contributions
+
+The STT-Runner welcomes contributions. For more details on contributing to the repo please see the [contributors guide](./contributing.md#contributions).
 
 ## Known Issues
 **Transcription speed** - We are working on improving this, approximately 2x slower than expected currently
