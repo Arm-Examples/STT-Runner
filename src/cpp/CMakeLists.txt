@@ -18,12 +18,17 @@ add_subdirectory(log)
 #       would change to a SHARED or STATIC library.
 add_library(arm-stt-cpp INTERFACE)
 target_include_directories(arm-stt-cpp INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include)
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(arm-stt-cpp INTERFACE arm-stt-log)
+if(ENABLE_STREAMLINE)
+    include(streamline)
+    arm_stt_enable_streamline(arm-stt-cpp)
+endif()
+
 if (${STT_DEP_NAME} STREQUAL "whisper.cpp")
     add_subdirectory(whisper_cpp)
 else()
     message(FATAL_ERROR "${STT_DEP_NAME} is currently not supported :(")
 endif()
-

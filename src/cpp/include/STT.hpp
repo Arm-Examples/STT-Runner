@@ -9,6 +9,10 @@
 
 #include <string>
 
+#if defined(ENABLE_STREAMLINE)
+#include "profiling/StreamlineStt.hpp"
+#endif
+
 /**
  * Interface to STT(Speech to text)
  * Contains generic STT functions
@@ -19,6 +23,8 @@ class STT {
 private:
     T stt;
 public:
+    STT() = default;
+
     /**
      * Initializes the Whisper parameters with the specified settings.
      * @param printRealTime  whether to print partial decoding results in real-time
@@ -37,6 +43,16 @@ public:
                     const int numThreads, const int offsetMs, const bool noContext,
                     const bool singleSegment)
     {
+#if defined(ENABLE_STREAMLINE)
+        sl::InitThreadOnce();
+        sl::Scope scope(sl::CH_INIT, ANNOTATE_BLUE, "STT::InitParams");
+        if (translate) {
+            sl::marker(ANNOTATE_CYAN, "Translate enabled");
+        }
+        if (singleSegment) {
+            sl::marker(ANNOTATE_YELLOW, "Single segment mode");
+        }
+#endif
         stt.InitParams(printRealTime, printProgress, timeStamps, printSpecial, translate,
                        language, numThreads, offsetMs, noContext, singleSegment);
     }
@@ -51,6 +67,11 @@ public:
     template<typename P>
     P *InitContext(const char *pathToModel, const char *sharedLibraryPath )
     {
+#if defined(ENABLE_STREAMLINE)
+        sl::InitThreadOnce();
+        sl::Scope scope(sl::CH_INIT, ANNOTATE_BLUE, "STT::InitContext");
+        sl::marker(ANNOTATE_BLUE, "Loading model");
+#endif
         return stt.InitContext(pathToModel, sharedLibraryPath);
     }
 
@@ -62,6 +83,10 @@ public:
     template<typename P>
     void FreeContext(P* contextPtr)
     {
+#if defined(ENABLE_STREAMLINE)
+        sl::InitThreadOnce();
+        sl::Scope scope(sl::CH_CONTROL, ANNOTATE_DKGRAY, "STT::FreeContext");
+#endif
         stt.FreeContext(contextPtr);
     }
 
@@ -76,7 +101,16 @@ public:
     template<typename P>
     std::string FullTranscribe(P* contextPtr, float* audioData, int audioDataLength)
     {
-        return stt.FullTranscribe(contextPtr, audioData, audioDataLength);
+#if defined(ENABLE_STREAMLINE)
+        sl::InitThreadOnce();
+        sl::Scope scope(sl::CH_TRANSCRIBE, ANNOTATE_GREEN, "STT::FullTranscribe");
+        sl::marker(ANNOTATE_GREEN, "Transcription start");
+#endif
+        std::string transcribed = stt.FullTranscribe(contextPtr, audioData, audioDataLength);
+#if defined(ENABLE_STREAMLINE)
+        sl::marker(ANNOTATE_GREEN, "Transcription complete");
+#endif
+        return transcribed;
     }
 };
 #endif //STT_STT_HPP
