@@ -8,6 +8,10 @@
 #include "WhisperImpl.hpp"
 #include "STT.hpp"
 
+#if defined(ENABLE_STREAMLINE)
+#include "profiling/StreamlineStt.hpp"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,6 +41,10 @@ Java_com_arm_stt_Whisper_initParams(JNIEnv *env, jobject, const jboolean jprintR
                                     const jint jnumThreads, const jint joffsetMs, const jboolean jnoContext,
                                     const jboolean jsingleSegment)
 {
+#if defined(ENABLE_STREAMLINE)
+    sl::InitThreadOnce();
+    sl::Scope scope(sl::CH_CONTROL, ANNOTATE_DKGRAY, "JNI::Whisper_initParams");
+#endif
     const char *language_chars = env->GetStringUTFChars(jlanguage, nullptr);
     stt.InitParams(jprintRealtime, jprintProgress, jtimeStamps, jprintSpecial,
                                                  jtranslate, language_chars, jnumThreads, joffsetMs,
@@ -55,6 +63,10 @@ Java_com_arm_stt_Whisper_initParams(JNIEnv *env, jobject, const jboolean jprintR
 JNIEXPORT jlong JNICALL Java_com_arm_stt_Whisper_initContext
   (JNIEnv* env, jobject, jstring modelPath, jstring sharedLibraryPath)
 {
+#if defined(ENABLE_STREAMLINE)
+    sl::InitThreadOnce();
+    sl::Scope scope(sl::CH_CONTROL, ANNOTATE_DKGRAY, "JNI::Whisper_initContext");
+#endif
     const auto sharedLibraryPathNative = env->GetStringUTFChars(sharedLibraryPath, nullptr);
     const auto modelPathChars = env->GetStringUTFChars(modelPath, nullptr);
     whisper_context *context = stt.InitContext<whisper_context>(modelPathChars, sharedLibraryPathNative);
@@ -70,6 +82,10 @@ JNIEXPORT jlong JNICALL Java_com_arm_stt_Whisper_initContext
 JNIEXPORT void JNICALL Java_com_arm_stt_Whisper_freeContext
   (JNIEnv*, jobject, const jlong contextPtr)
 {
+#if defined(ENABLE_STREAMLINE)
+    sl::InitThreadOnce();
+    sl::Scope scope(sl::CH_CONTROL, ANNOTATE_DKGRAY, "JNI::Whisper_freeContext");
+#endif
     auto *context = reinterpret_cast<struct whisper_context *>(contextPtr);
     stt.FreeContext<whisper_context>(context);
 }
@@ -84,6 +100,10 @@ JNIEXPORT void JNICALL Java_com_arm_stt_Whisper_freeContext
 JNIEXPORT jstring JNICALL Java_com_arm_stt_Whisper_fullTranscribe
   (JNIEnv *env, jobject, const jlong contextPtr, jfloatArray audioData)
 {
+#if defined(ENABLE_STREAMLINE)
+    sl::InitThreadOnce();
+    sl::Scope scope(sl::CH_CONTROL, ANNOTATE_DKGRAY, "JNI::Whisper_fullTranscribe");
+#endif
     auto *context = reinterpret_cast<struct whisper_context *>(contextPtr);
     jfloat *audio_data_arr = env->GetFloatArrayElements(audioData, nullptr);
     const jsize audio_data_length = env->GetArrayLength(audioData);

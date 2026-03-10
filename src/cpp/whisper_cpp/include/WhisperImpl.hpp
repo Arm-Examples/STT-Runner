@@ -12,6 +12,7 @@
 #include "SttErrorMessages.hpp"
 #include <string>
 
+
 #ifndef STT_WHISPER_IMPL_HPP
 #define STT_WHISPER_IMPL_HPP
 
@@ -161,10 +162,13 @@ public:
         
         whisper_reset_timings(contextPtr);
         LOG_DEBUG("Starting transcription: frames=%d", audioDataLength);
-        const int resultCode = whisper_full(contextPtr, 
-            whisperParams, 
-            &audioDataPtr[0], 
+
+        int resultCode = 0;
+        resultCode = whisper_full(contextPtr,
+            whisperParams,
+            &audioDataPtr[0],
             audioDataLength);
+
         if (resultCode != 0) {
             THROW_ERROR("whisper_full failed with code %d", resultCode);
         }
@@ -177,6 +181,7 @@ public:
         {
             transcribed += GetTextSegment(contextPtr, i);
         }
+
         LOG_INF("Transcription complete: segments=%d, chars=%zu", count, transcribed.size());
         return transcribed;
     }
