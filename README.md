@@ -90,15 +90,12 @@ So for example native builds are have been tested on Linux-x86_64, Linux-aarch64
 
 ### To Build for Linux (aarch64) with KleidiAI and SME kernels
 
-Instead of passing a complex -march=… string directly to CMake, CPU_ARCH can be set to one of the canonical names e.g. -DCPU_ARCH=Armv8.2_4
-The build system will map CPU_ARCH to the correct -march= feature string for you and validate the value. 
-If you do want to supply a custom -march exactly as-is, pass it through the GGML_CPU_ARM_ARCH variable:
- -DGGML_CPU_ARM_ARCH="armv8.2-a+dotprod+i8mm")
-
-Supported CPU_ARCH values: Armv8.2_1, Armv8.2_2, Armv8.2_3, Armv8.2_4, Armv8.2_5, Armv8.6_1, Armv8.6_2, Armv9.2_1, Armv9.2_2.
+To manually override the `-march` flag, pass your exact value at configure time:
+- For ggml's CPU backend: `-DGGML_CPU_ARM_ARCH="armv8.2-a+dotprod+i8mm+sve+sme"`
+- For the rest of the project: `-DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod+i8mm+sve+sme" -DCMAKE_CXX_FLAGS="-march=armv8.2-a+dotprod+i8mm+sve+sme"`
 
 To build with SME kernels, ensure `GGML_CPU_ARM_ARCH` is set with needed feature flags as below.
-Flag USE_KLEIDI is set to ON by default and will set -DGGML_CPU_KLEIDIAI=ON automatically.
+Flag `USE_KLEIDIAI` is set to ON by default and will set `-DGGML_CPU_KLEIDIAI=ON` automatically.
 
 ```shell
 
@@ -107,7 +104,8 @@ Flag USE_KLEIDI is set to ON by default and will set -DGGML_CPU_KLEIDIAI=ON auto
 
 cmake -B build \
     --preset=x-linux-aarch64 \
-    -DCPU_ARCH=Armv8.2_2 \
+    -DGGML_CPU_ARM_ARCH=armv8.2-a+dotprod+i8mm+sve+sme \
+    -DGGML_CPU_KLEIDIAI=ON \
 
 cmake --build ./build
 ```
@@ -251,6 +249,7 @@ cmake -B build \
     -DGGML_BACKEND_DL=ON \
     -DGGML_SYSTEM_ARCH=ARM \
     -DBUILD_SHARED_LIBS=ON \
+    -DGGML_CPU_KLEIDIAI=ON \
     -DTEST_DATA_DIR="/data/local/tmp" \
     -DTEST_MODELS_DIR="/data/local/tmp" \
     -DBACKEND_SHARED_LIB_DIR="/data/local/tmp" \

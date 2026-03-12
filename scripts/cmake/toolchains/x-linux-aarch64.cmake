@@ -22,11 +22,9 @@ set(CMAKE_CROSSCOMPILING true)
 set(CMAKE_SYSTEM_NAME Linux)
 set(TARGET_PLATFORM "linux-aarch64")
 
-set(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES CPU_ARCH TARGET_PLATFORM)
+set(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES TARGET_PLATFORM)
 
 include("${CMAKE_CURRENT_LIST_DIR}/base.cmake")
-
-include("${CMAKE_CURRENT_LIST_DIR}/aarch64-base.cmake")
 
 set(GNU_MACHINE "aarch64-none-linux-gnu-")
 set(CROSS_PREFIX "aarch64-none-linux-gnu-")
