@@ -32,3 +32,8 @@ if (${STT_DEP_NAME} STREQUAL "whisper.cpp")
 else()
     message(FATAL_ERROR "${STT_DEP_NAME} is currently not supported :(")
 endif()
+
+# Add benchmark targets only when explicitly enabled.
+if(BUILD_BENCHMARK)
+    add_subdirectory(benchmark)
+endif()

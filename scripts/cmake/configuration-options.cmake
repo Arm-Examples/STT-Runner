@@ -18,6 +18,7 @@ set(DOWNLOADS_LOCK_TIMEOUT 600
     trying to download resources to the same directory.")
 
 option(BUILD_EXECUTABLE  "Build stand-alone executables"     OFF)
+option(BUILD_BENCHMARK   "Build STT benchmark executable"    ON)
 option(BUILD_UNIT_TESTS  "Build unit tests"                  ON)
 option(BUILD_JNI_LIB     "Build JNI lib"                     ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"            OFF)
