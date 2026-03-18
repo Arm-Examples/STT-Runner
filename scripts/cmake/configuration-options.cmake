@@ -1,5 +1,5 @@
 #
-# SPDX-FileCopyrightText: Copyright 2025 Arm Limited and/or its affiliates <open-source-office@arm.com>
+# SPDX-FileCopyrightText: Copyright 2025-2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -17,8 +17,8 @@ set(DOWNLOADS_LOCK_TIMEOUT 600
     "Timeout in seconds for lock to hold off concurrent CMake configurations
     trying to download resources to the same directory.")
 
-option(BUILD_EXECUTABLE "Build stand-alone executables"     OFF)
-option(BUILD_UNIT_TESTS "Build unit tests"                  ON)
-option(BUILD_JNI_LIB    "Build JNI lib"                     ON)
-option(BUILD_SHARED_LIBS "Build shared libraries"           OFF)
-
+option(BUILD_EXECUTABLE  "Build stand-alone executables"     OFF)
+option(BUILD_UNIT_TESTS  "Build unit tests"                  ON)
+option(BUILD_JNI_LIB     "Build JNI lib"                     ON)
+option(BUILD_SHARED_LIBS "Build shared libraries"            OFF)
+option(ENABLE_STREAMLINE "Enable Arm Streamline annotations" OFF)

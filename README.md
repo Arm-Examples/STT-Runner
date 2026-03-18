@@ -21,6 +21,7 @@
   * [Building and running tests](#building-and-running-tests)
     * [To Build a test executable](#to-build-a-test-executable)
     * [To Build a JNI lib](#to-build-a-jni-lib)
+  * [Arm Streamline support](#arm-streamline-support)
   * [Contributions](#contributions)
   * [Known Issues](#known-issues)
   * [Trademarks](#trademarks)
@@ -49,6 +50,7 @@ The project is designed to download the required software sources based on user
 provided configuration options.
 
 - `STT_DEP_NAME`: Can be `whisper.cpp` only in current implementation. Other options may be added later.
+- `ENABLE_STREAMLINE`: Enables Arm Streamline timeline annotations for STT initialization, transcription, post-processing, and control-path diagnostics.
 - `WHISPER_SRC_DIR`: Path to the local source directory for the `whisper.cpp` dependency.
 - `WHISPER_GIT_URL`: Git repository URL used to clone the `whisper.cpp` dependency.
 - `WHISPER_GIT_TAG`: Specific git tag to use for the `whisper.cpp` dependency.
@@ -312,6 +314,19 @@ To quantize your model, you can use the [whisper.cpp quantize tool](https://gith
 
 However, any model supported by the backend library could be used.
 > **NOTE**: Currently only Q4_0 models are accelerated by Arm® KleidiAI™ kernels in whisper.cpp.
+
+## Arm Streamline support
+
+Streamline support is optional and disabled by default. When enabled, CMake fetches Arm Gator v9.7.2 annotation sources and adds markers around the generic STT wrapper lifecycle and JNI control-path entry points.
+
+To enable it, add `-DENABLE_STREAMLINE=ON` to the configure command for the preset you are using.
+
+```shell
+cmake -B build --preset=native -DENABLE_STREAMLINE=ON
+cmake --build build
+```
+
+For Android™ builds, use the same flag with `--preset=x-android-aarch64`. When capturing with Arm Streamline, attach to the Android app process that loads `arm-stt-jni`, or run a native C++ consumer such as `stt-cpp-tests` under Streamline on Linux.
 
 ## Contributions
 
