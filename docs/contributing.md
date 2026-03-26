@@ -4,7 +4,17 @@
     SPDX-License-Identifier: Apache-2.0
 -->
 
-# Contributions
+# Contribution Guide
+
+## Table of Contents
+
+- [Contributions](#contributions)
+- [Examples](#examples)
+- [Contribution Workflow](#contribution-workflow)
+- [Code Reviews](#code-reviews)
+
+---
+## Contributions
 
 Contributions are only accepted under the following conditions:
 
@@ -29,6 +39,8 @@ Prefer the short, machine-readable SPDX tags:
 - `SPDX-License-Identifier: Apache-2.0`
 
 **Do not** copy a C-style `/* ... */` block into files that do not support that comment syntax (Python, shell, YAML, JSON, etc.). Instead use the comment style appropriate for the file's language — examples below.
+
+---
 
 ## Examples
 
@@ -58,6 +70,7 @@ Prefer the short, machine-readable SPDX tags:
 -->
 ```
 
+---
 ## Contribution Workflow
 
 All contributions must follow this process:
@@ -74,10 +87,10 @@ All contributions must follow this process:
 
 Direct pushes to this repository are not permitted.
 
+---
 ## Code Reviews
 
 All contributions must go through code review.
 Pull requests are reviewed by project maintainers through the public pull request discussion. In addition, 
 maintainers may perform internal validation and compliance checks as part of the review process.
 A contribution will only be merged once it passes all required checks and receives approval from a maintainer.
-

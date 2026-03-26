@@ -1,79 +1,101 @@
 <!--
-    SPDX-FileCopyrightText: Copyright 2024-2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
-
-    SPDX-License-Identifier: Apache-2.0
+SPDX-FileCopyrightText: Copyright 2024-2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
+SPDX-License-Identifier: Apache-2.0
 -->
 
-# Speech to Text library
-<!-- TOC -->
-* [Speech to Text library](#speech-to-text-library)
-  * [Prerequisites](#prerequisites)
-  * [Configuration options](#configuration-options)
-  * [Quick start](#quick-start)
-    * [Neural network](#neural-network)
-    * [To Build for Android with KleidiAI kernels](#to-build-for-android-with-kleidiai-kernels)
-    * [To Build for Android without KleidiAI Kernels](#to-build-for-android-without-kleidiai-kernels)
-      * [To test the above build please do the following:](#to-test-the-above-build-please-do-the-following)
-    * [To Build for Linux (aarch64) with KleidiAI and SME kernels](#to-build-for-linux-aarch64_with-kleidiai-and-sme-kernels)
-    * [To Build for Linux (aarch64) without KleidiAI Kernels](#to-build-for-linux-aarch64_without-kleidiai-kernels)
-    * [To Build for native host](#to-build-for-native-host)
-    * [To Build for macOS](#to-build-for-macos)
-  * [Building and running tests](#building-and-running-tests)
-    * [To Build a test executable](#to-build-a-test-executable)
-    * [To Build a JNI lib](#to-build-a-jni-lib)
-  * [Arm Streamline support](#arm-streamline-support)
-  * [Contributions](#contributions)
-  * [Known Issues](#known-issues)
-  * [Trademarks](#trademarks)
-  * [License](#license)
-<!-- TOC -->
+# Speech to Text Library
 
-This repo is designed for building an
-[Arm® KleidiAI™](https://www.arm.com/markets/artificial-intelligence/software/kleidi)
-enabled STT library using CMake build system. It intends to provide an abstraction for [whisper.cpp](https://github.com/ggml-org/whisper.cpp) framework, and it has Arm® KleidiAI™ backend available. In future, we **may** add support for other frameworks and models.
+## Table of Contents
 
-The backend library (selected at CMake configuration stage) is wrapped by this project's thin C++ layer that could be used
-directly for testing and evaluations. However, JNI bindings are also provided for developers targeting Android™ based
-applications.
+- [Overview](#overview)
+- [Quick Start](#quick-start)
+- [Prerequisites](#prerequisites)
+- [Architecture](#architecture)
+- [Supported Platforms & cmake presets](#supported-platforms--cmake-presets)
+  - [Build Options](#build-options)
+- [Documentation](#documentation)
+- [Repository Structure](#repository-structure)
+- [Building with/without KleidiAI + SME](#building-withwithout-kleidiai--sme)
+  - [Linux with KleidiAI + SME](#linux-with-kleidiai--sme)
+  - [Linux without KleidiAI](#linux-without-kleidiai)
+  - [macOS native (optional custom CPU flags)](#macos-native-optional-custom-cpu-flags)
+  - [To Build a JNI lib](#to-build-a-jni-lib)
+  - [Unit tests](#unit-tests)
+- [Android Build and Execution](#android-build-and-execution)
+  - [With KleidiAI kernels + SME](#with-kleidiai-kernels--sme)
+- [Performance Evaluation](#performance-evaluation)
+  - [Arm Streamline support](#arm-streamline-support)
+- [Integration Guidance](#integration-guidance)
+- [Neural Network Used](#neural-network-used)
+- [Contributions](#contributions)
+- [Trademarks](#trademarks)
+- [License](#license)
 
-## Prerequisites
+---
 
-* CMake 3.27 or above installed
-* Android™ NDK 29.0.14033849  (if building for Android™)
-* Python 3.9 or above installed, python is used to download test resources and models
-* NDK_PATH set to point at the install location of the Android™ NDK
-* aarch64 toolchain (Tested with v11.2-2022.02)
+# Overview
 
-## Configuration options
 
-The project is designed to download the required software sources based on user
-provided configuration options.
+This project provides a platform-agnostic Speech-to-Text (STT) library that makes it easier to add Automatic Speech Recognition (ASR) capabilities to both new and existing applications.
 
-- `STT_DEP_NAME`: Can be `whisper.cpp` only in current implementation. Other options may be added later.
-- `ENABLE_STREAMLINE`: Enables Arm Streamline timeline annotations for STT initialization, transcription, post-processing, and control-path diagnostics.
-- `WHISPER_SRC_DIR`: Path to the local source directory for the `whisper.cpp` dependency.
-- `WHISPER_GIT_URL`: Git repository URL used to clone the `whisper.cpp` dependency.
-- `WHISPER_GIT_TAG`: Specific git tag to use for the `whisper.cpp` dependency.
+For Arm targets, the library builds optimised binaries that take full advantage of Arm's advanced AI/ML CPU features via **Arm® KleidiAI™** , ensuring the best on-device CPU performance is achieved for AI/ML workloads.
 
-## Quick start
+It includes built-in support for Java and Kotlin, with no extra wrapper code required. The library can be integrated into an Android project quickly using a simple build script.
 
-### Preset Build Defaults
+The library supports Android, Linux-aarch64, Linux-x86, and macOS. This makes it easy to develop and test STT features on Linux or macOS, then deploy to Android with minimal effort.
+The library wraps the underlying inference engine (`whisper.cpp`) behind behind lightweight C++ and Java APIs and when targeting Arm platforms, automatically enables [**Arm® KleidiAI™**](https://www.arm.com/markets/artificial-intelligence/software/)
+ kernels by default to deliver optimal CPU acceleration.
 
-CMake presets are used to simplify build commands and the following flags are set by default and must be overwritten as required:
-When using the standard presets (native, x-android-aarch64, x-linux-aarch64), the following flags are already set and do NOT need to be passed manually:
+Typical uses include:
 
--DUSE_KLEIDIAI=ON (unless explicitly overridden)
--DDBUILD_UNIT_TESTS=ON
--DDBUILD_JNI_LIB=ON
--DDBUILD_SHARED_LIBS=OFF
--DDBUILD_EXECUTABLE=OFF
--DDGGML_OPENMP=OFF
+- voice assistants
+- speech transcription tools
+- embedded voice interfaces
+- Android™ applications
 
-macOS Specific:
--DGGML_METAL=OFF
--DGGML_BLAS=OFF
+---
 
-## Supported Platforms & cmake presets
+# Quick Start
+
+Please see:
+
+- [docs/quickstart.md](docs/quickstart.md)
+
+---
+
+# Prerequisites
+
+Required tools:
+
+- **CMake 3.27+**
+- **Python 3.9+**
+- **Android™ NDK 29.0.14033849** (for Android builds)
+- **aarch64 toolchain** (tested with v11.2‑2022.02)
+
+
+---
+
+# Architecture
+
+```mermaid
+graph TD
+    AudioInput --> STTLibrary
+    STTLibrary --> whisper.cpp
+    whisper.cpp --> KleidiAI
+    KleidiAI --> CPU
+    KleidiAI --> SME
+```
+
+# Supported Platforms & cmake presets
+
+CMake presets are used to simplify build commands. You can use any of the standard presets (`native`, `x-android-aarch64`, `x-linux-aarch64`) as follows:
+
+Example:
+
+```bash
+cmake -B build --preset=native -DBUILD_EXECUTABLE=ON
+cmake --build build
+```
 
 The supported build platforms and cmake presets matrix is given below.
 The cmake presets (aka build target) are given in the first column and build platform in the first row.
@@ -81,266 +103,229 @@ So for example native builds are have been tested on Linux-x86_64, Linux-aarch64
 
 |  cmake-preset / Host Platform  | Linux-x86_64| Linux-aarch64                      | macOS-aarch64 | Android™ |
 |--------------------------------------|---------------|------------------------------------|---------------|---------|
-| native                               | ✅            | ✅ *                              | ✅            | -      |
+| native                               | ✅            | ✅                                | ✅            | -      |
 | x-android-aarch64                    | ✅            | -                                 | ✅            | -      |
 | x-linux-aarch64                      | ✅            | ✅ †                              | -            | -      |
 
 
 † Use 'native' preset
 
-### To Build for Linux (aarch64) with KleidiAI and SME kernels
 
-To manually override the `-march` flag, pass your exact value at configure time:
-- For ggml's CPU backend: `-DGGML_CPU_ARM_ARCH="armv8.2-a+dotprod+i8mm+sve+sme"`
-- For the rest of the project: `-DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod+i8mm+sve+sme" -DCMAKE_CXX_FLAGS="-march=armv8.2-a+dotprod+i8mm+sve+sme"`
+---
 
-To build with SME kernels, ensure `GGML_CPU_ARM_ARCH` is set with needed feature flags as below.
-Flag `USE_KLEIDIAI` is set to ON by default and will set `-DGGML_CPU_KLEIDIAI=ON` automatically.
+### Build Options
+
+Flag name | Default | Values | Description |
+| --- | --- | --- | --- |
+| `USE_KLEIDIAI` | ON | ON/OFF | Build with KleidiAI CPU optimizations; if OFF, optimizations are disabled. |
+| `BUILD_UNIT_TESTS` | ON | ON/OFF | Builds unit tests when ON. |
+| `BUILD_JNI_LIB` | ON | ON/OFF | Builds JNI bindings when ON. |
+| `BUILD_SHARED_LIBS` | OFF | ON/OFF | Builds shared libraries when ON. |
+| `BUILD_EXECUTABLE` | OFF | ON/OFF | Builds example CLI (`whisper-cli`) when ON. |
+| `GGML_OPENMP` | OFF | ON/OFF | Enables OpenMP support when ON. |
+| `GGML_METAL` | OFF | ON/OFF | macOS only. Enables Metal backend when ON. |
+| `GGML_BLAS` | OFF | ON/OFF | macOS only. Enables BLAS backend when ON. |
+
+
+
+
+# Documentation
+
+| Guide       | Description                                                                 | Link                  |
+| ----------- | --------------------------------------------------------------------------- | --------------------- |
+| Overview    | Overview of all documentation                                               | [docs/README.md](docs/README.md)      |
+| Quickstart  | Get up and running quickly                                                  | [docs/quickstart.md](docs/quickstart.md)  |
+| Performance | Performance tuning and benchmarks                                           | [docs/benchmarking.md](docs/benchmarking.md) |
+| Integration | Integrate the STT-Runner library into your application using available APIs | [docs/integration.md](docs/integration.md)     |
+| Contributing | Contribution guide for this repo | [docs/contributing.md](docs/contributing.md)     |
+| Architecture | Overview of the repo and system| [docs/architecture.md](docs/architecture.md)     |
+
+
+---
+
+# Repository Structure
+
+```
+.
+├── docs/                     Project documentation
+├── scripts/                  Build helpers and resource scripts
+├── src/                      Core STT abstraction layer
+├── test/                     Unit tests
+├── resources_downloaded/     Models and example inputs
+└── CMakeLists.txt            Top level build configuration
+```
+
+---
+
+
+# Building with/without KleidiAI + SME
+
+#### Linux with KleidiAI + SME
 
 ```shell
-
- export TOOLCHAIN=/home/user/tools/arm-gnu-toolchain-14.3.rel1-aarch64-aarch64-none-linux-gnu
- export PATH="$TOOLCHAIN/bin:$PATH"
-
-cmake -B build \
-    --preset=x-linux-aarch64 \
-    -DGGML_CPU_ARM_ARCH=armv8.2-a+dotprod+i8mm+sve+sme \
-    -DGGML_CPU_KLEIDIAI=ON \
+cmake -B build --preset=native 
 
 cmake --build ./build
 ```
 
-Once built, a standalone application can be executed to get performance.
-
-Set `GGML_KLEIDIAI_SME=1` to enable the use of SME kernels during execution:
+Enable SME kernels at runtime:
 
 ```shell
-GGML_KLEIDIAI_SME=1 ./build/bin/whisper-cli -m resources_downloaded/models/model.bin /path/to/audio/audiofile.wav
+GGML_KLEIDIAI_SME=1 ./build/bin/whisper-cli -m resources_downloaded/models/model.bin /path/to/audio.wav
 ```
 
-To run without invoking SME kernels, set `GGML_KLEIDIAI_SME=0` during execution:
+Disable SME kernels at runtime:
 
 ```shell
-GGML_KLEIDIAI_SME=0 ./build/bin/whisper-cli -m resources_downloaded/models/model.bin /path/to/audio/audiofile.wav
+GGML_KLEIDIAI_SME=0 ./build/bin/whisper-cli -m resources_downloaded/models/model.bin /path/to/audio.wav
 ```
 
-### To Build for native host
-
-Default build is a release build with tests but these can be manually toggled using appropriate flags
-
-## Building with CMake presets
-
-The following examples show how to configure the project using the available
-top-level presets. Pick one configure command, then run the common build
-command below. Default settings are for release builds with unit-tests and jni enabled. Shared libraries are disabled.
-
-```shell
-# Native host (GNU toolchain)
-cmake -B build --preset=native
-
-# Android (arm64, NDK)
-cmake -B build --preset=x-android-aarch64
-
-# Linux (aarch64 cross-compile)
-cmake -B build --preset=x-linux-aarch64
-
-# Common build command
-cmake --build build
-```
-
-### Overriding preset options at configure time (non-exhaustive list)
-
-You can override preset defaults by passing `-D<VAR>=<VALUE>` alongside `--preset`.
-
-
-```sh
-# Disable unit tests
-cmake -B build --preset=native -DBUILD_UNIT_TESTS=OFF
-
-# Switch to a Debug build
-cmake -B build --preset=native -DCMAKE_BUILD_TYPE=Debug
-
-# Disable unit tests and use a Debug build
-cmake -B build --preset=native -DBUILD_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=Debug
-```
-
-### To Build for Linux (aarch64) without KleidiAI Kernels
-
+#### Linux without KleidiAI
 ```shell
 cmake -B build \
-    -DCMAKE_TOOLCHAIN_FILE=scripts/cmake/toolchains/aarch64.cmake \
-    -DCMAKE_C_FLAGS=-march=armv8.2-a+dotprod+i8mm+fp16 \
-    -DCMAKE_CXX_FLAGS=-march=armv8.2-a+dotprod+i8mm+fp16 \
-    -DGGML_CPU_KLEIDIAI=OFF
+    cmake -B build --preset=native -DUSE_KLEIDIAI=OFF
+
 cmake --build ./build
 ```
 
-### To Build for macOS
-To build for the CPU backend on macOS®, you can use the native CMake preset which will automatically assign toolchain.
-
-```shell
-cmake -B build --preset=native \
-    -DCMAKE_C_FLAGS=-march=armv8.2-a+dotprod+i8mm+fp16 \
-    -DCMAKE_CXX_FLAGS=-march=armv8.2-a+dotprod+i8mm+fp16 \
-cmake --build ./build
-```
-
-## Building and running tests
-
-To build and test for native host machine:
+#### macOS native (optional custom CPU flags)
 
 ```shell
 cmake -B build --preset=native
-cmake --build ./build
-ctest --test-dir ./build
-```
 
-### To Build a test executable
-
-The option:
-```
--DBUILD_EXECUTABLE=true
-```
-
-For example
-
-  ```shell
-cmake -B build \
-    -DCMAKE_TOOLCHAIN_FILE=scripts/cmake/toolchains/aarch64.cmake \
-    -DCMAKE_C_FLAGS=-march=armv8.2-a+dotprod+i8mm+fp16 \
-    -DCMAKE_CXX_FLAGS=-march=armv8.2-a+dotprod+i8mm+fp16 \
-    -DBUILD_EXECUTABLE=true
 cmake --build ./build
 ```
+NOTE: If you need specific version of Java set the path in JAVA_HOME environment variable.
 
-This will produce an executable, which you can use to test your build under :
 ```
-/build/bin/whisper-cli
-```
-
-You can run this executable and test an audio file using the following:
-```
-./whisper-cli -m resources_downloaded/models/model.bin /path/to/audio/audiofile.wav
+export JAVA_HOME=$(/usr/libexec/java_home)
 ```
 
-### To Build a JNI lib
+#### To Build a JNI lib
 
 Add the options:
 ```
 -DBUILD_JNI_LIB=true
 ```
 
-to run the sample test `WhisperTestApp.java` run the following commands post-build
-```
+#### Unit tests
+To run the unit tests
+
+```shell
 ctest --test-dir ./build
 ```
+---
 
-### To Build for Android with KleidiAI kernels
 
-```shell
+##  Android Build and Execution
 
-export NDK_PATH=/path/to/android-ndk-r29
-
-cmake -B build \
-    -DCMAKE_TOOLCHAIN_FILE=${NDK_PATH}/build/cmake/android.toolchain.cmake \
-    -DANDROID_ABI=arm64-v8a \
-    -DANDROID_PLATFORM=android-33 \
-    -DGGML_CPU_ALL_VARIANTS=ON \
-    -DGGML_BACKEND_DL=ON \
-    -DGGML_SYSTEM_ARCH=ARM \
-    -DBUILD_SHARED_LIBS=ON \
-    -DGGML_CPU_KLEIDIAI=ON \
-    -DTEST_DATA_DIR="/data/local/tmp" \
-    -DTEST_MODELS_DIR="/data/local/tmp" \
-    -DBACKEND_SHARED_LIB_DIR="/data/local/tmp" \
-    -DGGML_OPENMP=OFF
-
-cmake --build ./build
-```
-
-### To Build for Android without KleidiAI Kernels
+These Android examples use the NDK toolchain directly (no presets). Set your NDK path first:
 
 ```shell
-cmake -B build \
-    -DCMAKE_TOOLCHAIN_FILE=${NDK_PATH}/build/cmake/android.toolchain.cmake \
-    -DANDROID_ABI=arm64-v8a \
-    -DANDROID_PLATFORM=android-33 \
-    -DGGML_CPU_ALL_VARIANTS=ON \
-    -DGGML_BACKEND_DL=ON \
-    -DGGML_SYSTEM_ARCH=ARM \
-    -DBUILD_SHARED_LIBS=ON \
-    -DGGML_CPU_KLEIDIAI=OFF \
-    -DTEST_DATA_DIR="/data/local/tmp" \
-    -DTEST_MODELS_DIR="/data/local/tmp" \
-    -DBACKEND_SHARED_LIB_DIR="/data/local/tmp" \
-    -DGGML_OPENMP=OFF
-
-cmake --build ./build
+export NDK_PATH=/path/to/android-ndk
 ```
 
-#### To test the above build please do the following:
+#### With KleidiAI kernels + SME
+
+```shell
+cmake -B build —preset=x-android-aarch64 -DBUILD_SHARED_LIBS=ON
+
+cmake --build build
+```
+
+**To test the above build please do the following:**
 
 Firstly push the newly built test executable:
 ```shell
 adb push build/bin/stt-cpp-tests /data/local/tmp
 ```
-
 Next push the newly built libs:
 ```shell
 adb push build/lib/* /data/local/tmp
 ```
-
 Next you will need to shell to your device:
 ```shell
 adb shell
 cd data/local/tmp
 export LD_LIBRARY_PATH=./
 ```
-
 Finally just run the test executable:
 ```shell
 ./stt-cpp-tests
 ```
 
-### Underlying Neural network used in transcription
+---
 
-This project uses the **ggml-base.en model** as its default network. The model is not quantized.
-To strike a balance between computational efficiency and model performance, you can use the **Q4_0 quantization format**.
-To quantize your model, you can use the [whisper.cpp quantize tool](https://github.com/ggml-org/whisper.cpp/tree/v1.7.4?tab=readme-ov-file#quantization).
+# Performance Evaluation
 
-- You can access the model from [Hugging Face](https://huggingface.co/ggerganov/whisper.cpp/blob/main/ggml-base.en.bin).
-- The default model configuration is declared in the [`requirements.json`](scripts/py/requirements.json) file.
+Performance measurement and profiling instructions are available in:
 
-However, any model supported by the backend library could be used.
-> **NOTE**: Currently only Q4_0 models are accelerated by Arm® KleidiAI™ kernels in whisper.cpp.
+- [docs/benchmarking.md](docs/benchmarking.md)
+
+This includes:
+
+- benchmarking methodology
+- SME comparison guidance
+- profiling with **Arm Streamline**
+- tracing with **Perfetto**
 
 ## Arm Streamline support
 
-Streamline support is optional and disabled by default. When enabled, CMake fetches Arm Gator v9.7.2 annotation sources and adds markers around the generic STT wrapper lifecycle and JNI control-path entry points.
+See:
 
-To enable it, add `-DENABLE_STREAMLINE=ON` to the configure command for the preset you are using.
+- [docs/benchmarking.md](docs/benchmarking.md#5-profile-with-arm-streamline)
 
-```shell
-cmake -B build --preset=native -DENABLE_STREAMLINE=ON
-cmake --build build
+---
+
+# Integration Guidance
+
+Guidance for integrating this library into other applications:
+
+- [docs/integration.md](docs/integration.md)
+
+Topics include:
+
+- integrating with existing applications
+- Android JNI usage
+- build system integration
+
+---
+
+# Neural Network Used
+
+Default model:
+
+```
+ggml-base.en
 ```
 
-For Android™ builds, use the same flag with `--preset=x-android-aarch64`. When capturing with Arm Streamline, attach to the Android app process that loads `arm-stt-jni`, or run a native C++ consumer such as `stt-cpp-tests` under Streamline on Linux.
+Model source:
 
-## Contributions
+https://huggingface.co/ggerganov/whisper.cpp
 
-The STT-Runner welcomes contributions. For more details on contributing to the repo please see the [contributors guide](./contributing.md#contributions).
+To reduce compute cost you may use quantized models (e.g. **Q4_0**) using the whisper.cpp quantization tool.
 
-## Known Issues
-**Transcription speed** - We are working on improving this, approximately 2x slower than expected currently
+> Note: Only **Q4_0 models are currently accelerated by Arm® KleidiAI™ kernels**.
 
-## Trademarks
+---
 
-* Arm® and KleidiAI™ are registered trademarks or trademarks of Arm® Limited (or its subsidiaries) in the US and/or
-  elsewhere.
-* Android™ is a trademark of Google LLC.
-* macOS® is a trademark of Apple Inc.
+# Contributions
 
-## License
+Contributions are welcome.
 
-This project is distributed under the software licenses in [LICENSES](LICENSES) directory.
+Please read:
+
+- [contributing.md](docs/contributing.md)
+
+---
+
+# Trademarks
+
+- Arm® and KleidiAI™ are registered trademarks or trademarks of Arm Limited.
+- Android™ is a trademark of Google LLC.
+- macOS® is a trademark of Apple Inc.
+
+---
+
+# License
+This project is distributed under the licenses in the [LICENSES](LICENSES/) directory.
