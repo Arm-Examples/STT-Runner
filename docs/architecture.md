@@ -25,12 +25,12 @@ The project uses **CMake presets** to support native builds, Android builds, and
 
 ```mermaid
 graph TD
-    AudioInput["Audio Input (WAV)"]
+    AudioInput["Audio Input - WAV"]
 
-    Java["Java / Android (JNI) - Optional"]
-    STTRunner["STT-Runner Wrapper Library (C++)"]
-    Backend["Backend Engine (whisper.cpp)"]
-    Arm® KleidiAI™["Arm® KleidiAI™ Acceleration (default on Arm)"]
+    Java["Java / Android - Optional"]
+    STTRunner["STT-Runner Wrapper Library - C++"]
+    Backend["Backend Engine - whisper.cpp"]
+    KleidiAI["Arm® KleidiAI™ Acceleration - default on Arm"]
     CPU["CPU / SME Execution"]
 
     AudioInput --> Java
@@ -38,8 +38,8 @@ graph TD
 
     Java --> STTRunner
     STTRunner --> Backend
-    Backend --> Arm® KleidiAI™
-    Arm® KleidiAI™ --> CPU
+    Backend --> KleidiAI
+    KleidiAI --> CPU
 
 ```
 
