@@ -269,6 +269,10 @@ This includes:
 - profiling with **Arm Streamline**
 - tracing with **Perfetto**
 
+> **NOTE (Testing)**: When `BUILD_UNIT_TESTS=ON`, the test model is downloaded via the Hugging Face Hub. If the model you configure is gated/private, set `HF_TOKEN` in your environment or add credentials to `~/.netrc` (machine `huggingface.co`).
+> Example `~/.netrc` entry:
+> `machine huggingface.co login __token__ password <YOUR_HF_TOKEN>`
+
 ## Arm Streamline support
 
 See:
