@@ -3,18 +3,18 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-project(arm-stt-log
+project(stt-log
         VERSION 0.0.1
         DESCRIPTION "STT log"
         LANGUAGES CXX)
 
 # Add the STT log library
-add_library(arm-stt-log STATIC
+add_library(stt-log STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/Logger.cpp)
 
-set_target_properties(arm-stt-log PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(stt-log PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories(arm-stt-log PUBLIC
+target_include_directories(stt-log PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(STT_LOG_LEVEL "" CACHE STRING "choose log level (ERROR,WARN,INFO,DEBUG,VERBOSE)")
@@ -52,12 +52,12 @@ else()
     message(STATUS "Using deduced STT_LOG_LEVEL='${DEDUCED_LEVEL}' (${ACTIVE_LOG_LEVEL})")
 endif()
 
-target_compile_definitions(arm-stt-log PUBLIC ACTIVE_LOG_LEVEL=${ACTIVE_LOG_LEVEL})
+target_compile_definitions(stt-log PUBLIC ACTIVE_LOG_LEVEL=${ACTIVE_LOG_LEVEL})
 
 if(ANDROID)
     find_library(log-lib log)
     if(log-lib)
-        target_link_libraries(arm-stt-log PUBLIC ${log-lib})
+        target_link_libraries(stt-log PUBLIC ${log-lib})
     else()
         message(WARNING "Android liblog not found — __android_log_print may be undefined")
     endif()

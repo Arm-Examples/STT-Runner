@@ -13,7 +13,7 @@ endif()
 message(STATUS "Using CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 
 # Declare project
-project(arm-speech-to-text-wrapper
+project(stt-runner-wrapper
         VERSION     0.0.1
         DESCRIPTION "An Automatic Speech Recognition interface library"
         LANGUAGES   C CXX ASM)

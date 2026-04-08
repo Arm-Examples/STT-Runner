@@ -13,7 +13,7 @@ package com.arm.stt;
 public class Whisper {
     // Used to load the 'STT_lib' library on application startup.
     static {
-        System.loadLibrary("arm-stt-jni");
+        System.loadLibrary("stt-jni");
     }
 
     /**

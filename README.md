@@ -123,7 +123,7 @@ Flag name | Default | Values | Description |
 | `BUILD_JNI_LIB` | ON | ON/OFF | Builds JNI bindings when ON. |
 | `BUILD_SHARED_LIBS` | OFF | ON/OFF | Builds shared libraries when ON. |
 | `BUILD_EXECUTABLE` | OFF | ON/OFF | Builds example CLI (`whisper-cli`) when ON. |
-| `BUILD_BENCHMARK` | ON | ON/OFF | Builds the standalone benchmark executable (`arm-stt-bench`) when ON. |
+| `BUILD_BENCHMARK` | ON | ON/OFF | Builds the standalone benchmark executable (`stt-bench`) when ON. |
 | `GGML_OPENMP` | OFF | ON/OFF | Enables OpenMP support when ON. |
 | `GGML_METAL` | OFF | ON/OFF | macOS only. Enables Metal backend when ON. |
 | `GGML_BLAS` | OFF | ON/OFF | macOS only. Enables BLAS backend when ON. |
@@ -211,13 +211,13 @@ For example:
 
 ```shell
 cmake -B build --preset=native
-cmake --build build --target arm-stt-bench
+cmake --build build --target stt-bench
 ```
 
 Minimal usage only requires the model, the benchmark input size, and the thread count:
 
 ```shell
-./build/bin/arm-stt-bench --model resources_downloaded/models/model.bin --samples 160000 --threads 4
+./build/bin/stt-bench --model resources_downloaded/models/model.bin --samples 160000 --threads 4
 ```
 
 By default the benchmark uses `--iterations 5`, `--warmup 1`, `--language en`, and resolves `--shared-libs` from the executable directory.

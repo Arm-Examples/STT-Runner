@@ -5,7 +5,7 @@
 #
 include_guard(GLOBAL)
 
-function(arm_stt_enable_streamline target_name)
+function(stt_enable_streamline target_name)
     message(STATUS "STREAMLINE ENABLED for target: ${target_name}")
     include(FetchContent)
 
@@ -43,35 +43,35 @@ function(arm_stt_enable_streamline target_name)
             PROPERTY POSITION_INDEPENDENT_CODE ON)
     endif()
 
-    if(NOT TARGET arm_stt_streamline)
-        add_library(arm_stt_streamline INTERFACE)
+    if(NOT TARGET stt_streamline)
+        add_library(stt_streamline INTERFACE)
 
-        target_link_libraries(arm_stt_streamline INTERFACE
+        target_link_libraries(stt_streamline INTERFACE
             stt_streamline_annotate
         )
 
-        target_compile_definitions(arm_stt_streamline INTERFACE
+        target_compile_definitions(stt_streamline INTERFACE
             ENABLE_STREAMLINE
         )
 
-        target_compile_options(arm_stt_streamline INTERFACE
+        target_compile_options(stt_streamline INTERFACE
             -g
             -fno-omit-frame-pointer
             -fno-inline
         )
 
-        target_include_directories(arm_stt_streamline INTERFACE
+        target_include_directories(stt_streamline INTERFACE
             ${PROJECT_SOURCE_DIR}/src/cpp
         )
     endif()
 
     get_target_property(target_type ${target_name} TYPE)
     if(target_type STREQUAL "INTERFACE_LIBRARY")
-        target_link_libraries(${target_name} INTERFACE arm_stt_streamline)
+        target_link_libraries(${target_name} INTERFACE stt_streamline)
         return()
     endif()
 
-    target_link_libraries(${target_name} PUBLIC arm_stt_streamline)
+    target_link_libraries(${target_name} PUBLIC stt_streamline)
 
     set_property(TARGET ${target_name}
         PROPERTY POSITION_INDEPENDENT_CODE ON)
