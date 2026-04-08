@@ -1,5 +1,5 @@
 #
-# SPDX-FileCopyrightText: Copyright 2025 Arm Limited and/or its affiliates <open-source-office@arm.com>
+# SPDX-FileCopyrightText: Copyright 2025-2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -10,6 +10,7 @@ python convert_wav_to_csv.py --wav_file_path path/to/wav_file.wav --sample_rate 
 """
 
 import os
+import sys
 
 import argparse
 import librosa
@@ -38,11 +39,16 @@ def main(args):
     """
 
     file_exists = os.path.isfile(args.wav_file_path)
-    if file_exists:
+    if not file_exists:
+        print("Error, supplied WAV file path does not exist", file=sys.stderr)
+        sys.exit(1)
+
+    try:
         wav_as_array = read_wav_to_array(args.wav_file_path, args.sample_rate)
         np.savetxt(args.output_file_path, wav_as_array, fmt="%.8f,", newline='')
-    else:
-        print("Error, supplied WAV file path does not exist")
+    except Exception as e:
+        print(f"Error converting WAV to CSV: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 parser = argparse.ArgumentParser()
@@ -51,7 +57,7 @@ parser.add_argument("--wav_file_path", type=str, help="WAV file to convert to cs
 parser.add_argument("--output_file_path", type=str, help="Path for generated data",
                     required=True)
 parser.add_argument("--sample_rate", type=int,
-                    help="Sample rate we want the wav file resampled to.", default=48000)
+                    help="Sample rate we want the wav file resampled to.", default=16000)
 ARGS = parser.parse_args()
 
 if __name__ == "__main__":
