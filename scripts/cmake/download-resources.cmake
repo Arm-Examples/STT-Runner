@@ -1,22 +1,17 @@
 #
-# SPDX-FileCopyrightText: Copyright 2025 Arm Limited and/or its affiliates <open-source-office@arm.com>
+# SPDX-FileCopyrightText: Copyright 2025-2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
 #
 # SPDX-License-Identifier: Apache-2.0
 #
 
 include_guard(GLOBAL)
 include(configuration-options)
+include(python-deps)
 
-find_package(
-    Python3 3.9...3.11
-    COMPONENTS Interpreter
-    REQUIRED)
-
-if (NOT Python3_FOUND)
-    message(FATAL_ERROR "Required version of Python3 not found!")
-else()
-    message(STATUS "Python3 (v${Python3_VERSION}) found: ${Python3_EXECUTABLE}")
-endif()
+set(STT_HF_HUB_PIP_PACKAGE "huggingface_hub")
+set(STT_HF_HUB_PIP_CONSTRAINT ">=0.20.0")
+set(STT_HF_HUB_PIP_SPEC "${STT_HF_HUB_PIP_PACKAGE}${STT_HF_HUB_PIP_CONSTRAINT}")
+stt_ensure_python_dependency("huggingface_hub" "${STT_HF_HUB_PIP_SPEC}")
 
 # If the downloads directory doesn't exist, create one
 if (NOT EXISTS ${DOWNLOADS_DIR})
