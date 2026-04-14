@@ -4,8 +4,8 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-#ifndef ARM_STT_LOGGER_HPP
-#define ARM_STT_LOGGER_HPP
+#ifndef STT_LOGGER_HPP
+#define STT_LOGGER_HPP
 
 #include <string>
 #include <cstdarg>
@@ -88,4 +88,4 @@ namespace SttLog {
         throw std::invalid_argument(SttLog::vformat(fmt __VA_OPT__(, __VA_ARGS__))); \
     } while (0)
 
-#endif // ARM_STT_LOGGER_HPP
+#endif // STT_LOGGER_HPP

@@ -4,25 +4,25 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-project(arm-stt-benchmark
+project(stt-benchmark
         VERSION 0.0.1
         DESCRIPTION "STT Benchmark"
         LANGUAGES CXX)
 
-add_library(arm-stt-benchmark STATIC
+add_library(stt-benchmark STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/SttBenchmark.cpp)
 
-target_include_directories(arm-stt-benchmark PUBLIC
+target_include_directories(stt-benchmark PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_compile_features(arm-stt-benchmark PUBLIC cxx_std_17)
+target_compile_features(stt-benchmark PUBLIC cxx_std_17)
 
-target_link_libraries(arm-stt-benchmark PUBLIC
-    arm-stt-cpp)
+target_link_libraries(stt-benchmark PUBLIC
+    stt-cpp)
 
 if(BUILD_BENCHMARK)
-    add_executable(arm-stt-bench
+    add_executable(stt-bench
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-    target_link_libraries(arm-stt-bench PRIVATE arm-stt-benchmark)
-    target_compile_features(arm-stt-bench PRIVATE cxx_std_17)
+    target_link_libraries(stt-bench PRIVATE stt-benchmark)
+    target_compile_features(stt-bench PRIVATE cxx_std_17)
 endif()

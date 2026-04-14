@@ -95,18 +95,18 @@ FetchContent_Declare(whisper-cpp
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 FetchContent_MakeAvailable(whisper-cpp)
 
-if (NOT TARGET arm-stt-cpp)
-    add_library(arm-stt-cpp INTERFACE)
-    target_include_directories(arm-stt-cpp INTERFACE
+if (NOT TARGET stt-cpp)
+    add_library(stt-cpp INTERFACE)
+    target_include_directories(stt-cpp INTERFACE
             ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 endif()
 
 # Add the current
-target_include_directories(arm-stt-cpp INTERFACE
+target_include_directories(stt-cpp INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # List all libraries that we need to depend on here:
-target_link_libraries(arm-stt-cpp INTERFACE
+target_link_libraries(stt-cpp INTERFACE
     ggml
     ggml-base
     whisper)
@@ -115,11 +115,11 @@ if(BUILD_JNI_LIB)
     # Make sure JNI include directories have been set.
     include(find-jni)
 
-    add_library(arm-stt-jni SHARED
+    add_library(stt-jni SHARED
         ${CMAKE_CURRENT_SOURCE_DIR}/jni/Whisper.cpp)
 
-    target_link_libraries(arm-stt-jni PUBLIC arm-stt-cpp)
-    target_include_directories(arm-stt-jni PUBLIC
+    target_link_libraries(stt-jni PUBLIC stt-cpp)
+    target_include_directories(stt-jni PUBLIC
         ${JNI_INCLUDE_DIRS} # Populated by FindJNI CMake module
     )
 endif()

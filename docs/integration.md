@@ -31,7 +31,7 @@ Select the API that best fits your application.
 | API | When to use it | Output |
 | --- | --- | --- |
 | C++ API | Native applications and services | Static or shared library |
-| JNI API | Android applications | `libarm-stt-jni.so` |
+| JNI API | Android applications | `libstt-jni.so` |
 | CLI sample | Quick evaluation and benchmarking | `whisper-cli` executable |
 
 ---
@@ -93,7 +93,7 @@ Example embedding (CMake + C++):
 # CMakeLists.txt
 add_executable(my_app main.cpp)
 add_subdirectory(/path/to/STT-Runner stt_runner)
-target_link_libraries(my_app PRIVATE arm-stt-cpp)
+target_link_libraries(my_app PRIVATE stt-cpp)
 ```
 
 ```cpp

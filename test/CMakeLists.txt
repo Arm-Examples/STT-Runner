@@ -19,8 +19,8 @@ set(TEST_MODELS_DIR         ${DOWNLOADS_DIR}/models CACHE STRING "Directory with
 set(TEST_UTILS_DIR          ${DOWNLOADS_DIR}/test_utils CACHE STRING "Directory with required test utilities jar resources")
 set(BACKEND_SHARED_LIB_DIR  ${CMAKE_BINARY_DIR}/bin CACHE STRING "Directory with linked libraries")
 
-if (NOT TARGET arm-stt-cpp)
-    message(FATAL_ERROR "stt-cpp-tests requires target arm-stt-cpp")
+if (NOT TARGET stt-cpp)
+    message(FATAL_ERROR "stt-cpp-tests requires target stt-cpp")
 endif()
 
 message(STATUS "Adding C++ tests")
@@ -46,7 +46,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Android")
 endif()
 
 # Assert dependency on the actual C++ interface or library.
-target_link_libraries(stt-cpp-tests PUBLIC arm-stt-cpp)
+target_link_libraries(stt-cpp-tests PUBLIC stt-cpp)
 
 # Download Catch and add to the build.
 include(find-catch)
@@ -59,10 +59,10 @@ enable_testing()
 add_test(NAME stt-cpp-ctest COMMAND stt-cpp-tests)
 
 # If JNI libs are being built, add tests for these here.
-if(TARGET arm-stt-jni)
+if(TARGET stt-jni)
     message(STATUS "Adding JNI tests")
 
-    if (NOT TARGET arm-stt-java)
+    if (NOT TARGET stt-java)
         message(FATAL_ERROR "JNI tests cannot be built without Java interface")
     endif()
 
@@ -74,7 +74,7 @@ if(TARGET arm-stt-jni)
 
     # Get the Java interface source file path.
     get_target_property(STT_JAVA_INTERFACE_SOURCES
-        arm-stt-java INTERFACE_SOURCES)
+        stt-java INTERFACE_SOURCES)
     message(STATUS "Java interface sources: ${STT_JAVA_INTERFACE_SOURCES}")
 
     # Build Java archive using the interface and test sources.
@@ -87,7 +87,7 @@ if(TARGET arm-stt-jni)
 
     get_target_property(_jarFile stt-jni-tests JAR_FILE)
     get_target_property(_classDir stt-jni-tests CLASSDIR)
-    get_target_property(_jniLibPath arm-stt-jni LIBRARY_OUTPUT_DIRECTORY)
+    get_target_property(_jniLibPath stt-jni LIBRARY_OUTPUT_DIRECTORY)
 
     message(STATUS "Jar file:          ${_jarFile}")
     message(STATUS "Class compiled to: ${_classDir}")
